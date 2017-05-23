@@ -1,82 +1,65 @@
-var http = require('http');
+var http = require('http'),
+port = 8080,
+server = http.createServer(),
+state = 10;
 
 
-var port = 8080;
-
-
-var server = http.createServer();
-
-
-// Start the HTTP server, start listening for requests
-
-server.listen(port, function(error) {
-
-  if (error) {
-
-    console.log(error);
-
-  } else {
-
-    console.log('api listening on port', port);
-
-  }
-
+server.listen(port, function (error) {
+    if (error) {
+        console.log(error);
+    } else {
+        console.log('api listening on port', port);
+    }
 });
 
-
-
-// Create a event handler for "request"
-
-// this is an alternative way
- let state = 10 ;
-server.on('request', function(request, response) {
-
-  console.log('New http request received', request.url);
+server.on('request', function (request, response) {
+    let mainHtml;  
+    let htmlContent = (state) => {      
+    return`
+    <html>
+    <head>
+    </head>
+    <body>
+    <h1>${state}</h1>
+    </body>
+    </html>`;}
     
- 
-    
-    
-  if ( request.url === '/state') { 
-      
-      response.end(state.toString());
-  
-      
-      
-  }   
-    
-  else if  ( request.url === '/add' ) {
-         
-     state++;
-       
-    response.end(state.toString());
+    console.log('New http request received', request.url);
+
+    if (request.url === '/state') {
+        mainHtml = htmlContent(state);
+        console.log('original state is ' + state);
         
-          
-          
-  }
-   
-   else if  ( request.url === '/remove' ) {
-         
-     state--;
-       
-             
-    response.end(state.toString());
-          
-          
-  }    
-    else if  ( request.url === '/reset' ) {
-         
-     state = 10;
-       
-             
-    response.end(state.toString());
-          
-          
-  }   
-    else {
-     var error1 = '404 page not found';
-        response.end(error1);
-  }
-      
+    } else if (request.url === '/add') {
+        state++;
+        mainHtml = htmlContent(state);
+        console.log('plus one state ' + state);
 
+    } else if (request.url === '/remove') {
+        state--;
+        mainHtml = htmlContent(state);
+        console.log('minus one state ' + state);
 
+    } else if (request.url === '/reset') {
+        state = 10;
+        mainHtml = htmlContent(state);
+        console.log('reset state ' + state); 
+     
+    } else { 
+      mainHtml = `
+    <html>
+    <head>
+    </head>
+    <body>
+    <h1>canot find page</h1>
+    </body>
+    </html>`;
+    console.log('canot find page');   
+    } 
+    
+    
+    response.setHeader('content-type', 'text/html');
+    response.write(mainHtml);   
+    response.end();
+    
 });
