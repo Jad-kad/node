@@ -51,7 +51,7 @@ server.on('request', function (request, response) {
     <head>
     </head>
     <body>
-    <h1>canot find page</h1>
+    <h1>404 Cannot find page</h1>
     </body>
     </html>`;
     console.log('canot find page');   
